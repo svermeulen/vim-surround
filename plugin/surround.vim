@@ -357,13 +357,19 @@ function! s:dosurround(...) " {{{1
     let char = strpart(char,1)
     let spc = 1
   endif
-  if char == 'a'
+  if char == 't'
     let char = '>'
   endif
   if char == 'r'
     let char = ']'
   endif
-  let newchar = ""
+  if char == 'b'
+      let char = ')'
+  endif
+  if char == 'q'
+      let char = '"'
+  endif
+  let newchar = " "
   if a:0 > 1
     let newchar = a:2
     if newchar == "\<Esc>" || newchar == "\<C-C>" || newchar == ""
