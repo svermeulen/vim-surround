@@ -357,19 +357,8 @@ function! s:dosurround(...) " {{{1
     let char = strpart(char,1)
     let spc = 1
   endif
-  if char == 't'
-    let char = '>'
-  endif
-  if char == 'r'
-    let char = ']'
-  endif
-  if char == 'b'
-      let char = ')'
-  endif
-  if char == 'q'
-      let char = '"'
-  endif
-  let newchar = " "
+  let char = s:doreplacements(char)
+  let newchar = ""
   if a:0 > 1
     let newchar = a:2
     if newchar == "\<Esc>" || newchar == "\<C-C>" || newchar == ""
@@ -453,7 +442,34 @@ function! s:dosurround(...) " {{{1
   else
     silent! call repeat#set("\<Plug>Csurround".char.newchar.s:tag,scount)
   endif
+  try
+      normal! `z
+  catch /.*/
+  endtry
 endfunction " }}}1
+
+function! s:doreplacements(char)
+
+    let char = a:char
+
+    if char == 'r'
+        let char = ']'
+    endif
+    if char == 'c'
+        let char = '}'
+    endif
+    if char == 'g'
+        let char = '>'
+    endif
+    if char == 'b'
+        let char = ')'
+    endif
+    if char == 'q'
+        let char = '"'
+    endif
+
+    return char
+endfunction
 
 function! s:changesurround() " {{{1
   let a = s:inputtarget()
@@ -464,7 +480,12 @@ function! s:changesurround() " {{{1
   if b == ""
     return s:beep()
   endif
+  let b = s:doreplacements(b)
   call s:dosurround(a,b)
+  try
+      normal! `z
+  catch /.*/
+  endtry
 endfunction " }}}1
 
 function! s:opfunc(type,...) " {{{1
@@ -472,6 +493,7 @@ function! s:opfunc(type,...) " {{{1
   if char == ""
     return s:beep()
   endif
+  let char = s:doreplacements(char)
   let reg = '"'
   let sel_save = &selection
   let &selection = "inclusive"
@@ -528,6 +550,11 @@ function! s:opfunc(type,...) " {{{1
   else
     silent! call repeat#set("\<Plug>SurroundRepeat".char.s:tag)
   endif
+
+  try
+      normal! `z
+  catch /.*/
+  endtry
 endfunction
 
 function! s:opfunc2(arg)
@@ -551,13 +578,13 @@ function! s:closematch(str) " {{{1
 endfunction " }}}1
 
 nnoremap <silent> <Plug>SurroundRepeat .
-nnoremap <silent> <Plug>Dsurround  :<C-U>call <SID>dosurround(<SID>inputtarget())<CR>
-nnoremap <silent> <Plug>Csurround  :<C-U>call <SID>changesurround()<CR>
-nnoremap <silent> <Plug>Yssurround :<C-U>call <SID>opfunc(v:count1)<CR>
-nnoremap <silent> <Plug>YSsurround :<C-U>call <SID>opfunc2(v:count1)<CR>
+nnoremap <silent> <Plug>Dsurround  mz:<C-U>call <SID>dosurround(<SID>inputtarget())<CR>
+nnoremap <silent> <Plug>Csurround  mz:<C-U>call <SID>changesurround()<CR>
+nnoremap <silent> <Plug>Yssurround mz:<C-U>call <SID>opfunc(v:count1)<CR>
+nnoremap <silent> <Plug>YSsurround mz:<C-U>call <SID>opfunc2(v:count1)<CR>
 " <C-U> discards the numerical argument but there's not much we can do with it
-nnoremap <silent> <Plug>Ysurround  :<C-U>set opfunc=<SID>opfunc<CR>g@
-nnoremap <silent> <Plug>YSurround  :<C-U>set opfunc=<SID>opfunc2<CR>g@
+nnoremap <silent> <Plug>Ysurround  mz:<C-U>set opfunc=<SID>opfunc<CR>g@
+nnoremap <silent> <Plug>YSurround  mz:<C-U>set opfunc=<SID>opfunc2<CR>g@
 vnoremap <silent> <Plug>VSurround  :<C-U>call <SID>opfunc(visualmode(),visualmode() ==# 'V' ? 1 : 0)<CR>
 vnoremap <silent> <Plug>VgSurround :<C-U>call <SID>opfunc(visualmode(),visualmode() ==# 'V' ? 0 : 1)<CR>
 inoremap <silent> <Plug>Isurround  <C-R>=<SID>insert()<CR>
