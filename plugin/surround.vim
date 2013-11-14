@@ -145,6 +145,7 @@ function! s:wrap(string,char,type,...)
     let extraspace = ' '
   endif
   let idx = stridx(pairs,newchar)
+
   if newchar == ' '
     let before = ''
     let after  = ''
@@ -243,6 +244,7 @@ function! s:wrap(string,char,type,...)
     let before = ''
     let after  = ''
   endif
+
   let after  = substitute(after ,'\n','\n'.initspaces,'g')
   if type ==# 'V' || (special && type ==# "v")
     let before = substitute(before,' \+$','','')
@@ -454,18 +456,22 @@ function! s:doreplacements(char)
 
     if char == 'r'
         let char = ']'
-    endif
-    if char == 'c'
+    elseif char == 'c'
         let char = '}'
-    endif
-    if char == 'g'
+    elseif char == 'g'
         let char = '>'
-    endif
-    if char == 'b'
+    elseif char == 'b'
         let char = ')'
-    endif
-    if char == 'q'
+    elseif char == 'q'
         let char = '"'
+    elseif char == '('
+        let char = ')'
+    elseif char == '['
+        let char = ']'
+    elseif char == '{'
+        let char = '}'
+    elseif char == '<'
+        let char = '>'
     endif
 
     return char
