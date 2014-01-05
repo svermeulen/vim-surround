@@ -551,6 +551,9 @@ function! s:opfunc(type,...) " {{{1
   call setreg(reg,reg_save,reg_type)
   let &selection = sel_save
   let &clipboard = cb_save
+
+  normal! `[v`]=
+
   if a:type =~ '^\d\+$'
     silent! call repeat#set("\<Plug>Y".(a:0 && a:1 ? "S" : "s")."surround".char.s:tag,a:type)
   else
